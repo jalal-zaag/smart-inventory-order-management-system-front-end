@@ -1,0 +1,71 @@
+import React, { createContext, useState, useEffect } from 'react';
+import { ACCESS_TOKEN, PROFILE } from '../constant/ConstantVariables';
+import AuthService from '../services/AuthService';
+import { getErrorMessage } from '../utils/GenericUtils';
+
+export const AuthContext = createContext();
+
+export const AuthContextProvider = ({ children }) => {
+    const [user, setUser] = useState(null);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        checkAuth();
+    }, []);
+
+    const checkAuth = async () => {
+        const token = localStorage.getItem(ACCESS_TOKEN);
+        if (token) {
+            try {
+                const response = await AuthService.getMe();
+                setUser(response.data.user);
+                setIsAuthenticated(true);
+            } catch (error) {
+                logout();
+            }
+        }
+        setLoading(false);
+    };
+
+    const login = async (credentials) => {
+        const response = await AuthService.login(credentials);
+        const { token, user } = response.data;
+        localStorage.setItem(ACCESS_TOKEN, token);
+        localStorage.setItem(PROFILE, JSON.stringify(user));
+        setUser(user);
+        setIsAuthenticated(true);
+        return response;
+    };
+
+    const register = async (userData) => {
+        const response = await AuthService.register(userData);
+        const { token, user } = response.data;
+        localStorage.setItem(ACCESS_TOKEN, token);
+        localStorage.setItem(PROFILE, JSON.stringify(user));
+        setUser(user);
+        setIsAuthenticated(true);
+        return response;
+    };
+
+    const logout = () => {
+        localStorage.removeItem(ACCESS_TOKEN);
+        localStorage.removeItem(PROFILE);
+        setUser(null);
+        setIsAuthenticated(false);
+    };
+
+    return (
+        <AuthContext.Provider value={{
+            user,
+            isAuthenticated,
+            loading,
+            login,
+            register,
+            logout,
+            checkAuth
+        }}>
+            {children}
+        </AuthContext.Provider>
+    );
+};
