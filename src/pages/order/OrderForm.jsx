@@ -8,7 +8,7 @@ import { ToastContext } from '../../context/ToastContextProvider';
 import { getErrorMessage, formatCurrency } from '../../utils/GenericUtils';
 import CustomTable from '../../components/common/CustomTable';
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 const { Option } = Select;
 
 const OrderForm = () => {
@@ -161,16 +161,32 @@ const OrderForm = () => {
 
                     <Divider>Order Items</Divider>
 
-                    <Space style={{ marginBottom: 16, width: '100%' }} align="end">
-                        <div>
-                            <Text>Product</Text>
+                    <div style={{ 
+                        display: 'flex', 
+                        gap: 16, 
+                        marginBottom: 24,
+                        alignItems: 'flex-end',
+                        flexWrap: 'wrap'
+                    }}>
+                        <div style={{ flex: 1, minWidth: 250 }}>
+                            <label style={{ 
+                                display: 'block', 
+                                marginBottom: 4,
+                                fontSize: 14,
+                                color: 'rgba(0, 0, 0, 0.88)'
+                            }}>
+                                Product
+                            </label>
                             <Select
                                 placeholder="Select product"
-                                style={{ width: 250, display: 'block' }}
+                                style={{ width: '100%' }}
                                 value={selectedProduct}
                                 onChange={setSelectedProduct}
                                 showSearch
                                 optionFilterProp="children"
+                                filterOption={(input, option) =>
+                                    (option?.children?.toString() ?? '').toLowerCase().includes(input.toLowerCase())
+                                }
                             >
                                 {products.filter(p => !orderItems.find(i => i.product === p.id)).map(p => (
                                     <Option key={p.id} value={p.id}>
@@ -179,17 +195,32 @@ const OrderForm = () => {
                                 ))}
                             </Select>
                         </div>
-                        <div>
-                            <Text>Quantity</Text>
+                        <div style={{ width: 120 }}>
+                            <label style={{ 
+                                display: 'block', 
+                                marginBottom: 4,
+                                fontSize: 14,
+                                color: 'rgba(0, 0, 0, 0.88)'
+                            }}>
+                                Quantity
+                            </label>
                             <InputNumber
                                 min={1}
                                 value={quantity}
                                 onChange={setQuantity}
-                                style={{ width: 100, display: 'block' }}
+                                style={{ width: '100%' }}
+                                placeholder="Qty"
                             />
                         </div>
-                        <Button icon={<PlusOutlined />} onClick={addItem}>Add Item</Button>
-                    </Space>
+                        <Button 
+                            type="primary"
+                            icon={<PlusOutlined />} 
+                            onClick={addItem}
+                            style={{ minWidth: 120 }}
+                        >
+                            Add Item
+                        </Button>
+                    </div>
 
                     {orderItems.length > 0 ? (
                         <>
