@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Card, Typography, Descriptions, Table, Tag, Button, Space, Spin } from 'antd';
+import { Card, Typography, Descriptions, Tag, Button, Space, Spin } from 'antd';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
 import OrderService from '../../services/OrderService';
 import { ToastContext } from '../../context/ToastContextProvider';
 import { getErrorMessage, formatCurrency, getStatusColor } from '../../utils/GenericUtils';
 import { formatDateTime } from '../../utils/DateFormatterUtils';
+import CustomTable from '../../components/common/CustomTable';
 
 const { Title } = Typography;
 
@@ -66,7 +67,7 @@ const OrderView = () => {
                 </Descriptions>
 
                 <Title level={5} style={{ marginTop: 24 }}>Order Items</Title>
-                <Table
+                <CustomTable
                     columns={itemColumns}
                     dataSource={order?.items}
                     rowKey="_id"

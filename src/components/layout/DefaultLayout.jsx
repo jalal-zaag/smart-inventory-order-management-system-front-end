@@ -47,8 +47,21 @@ const DefaultLayout = ({ children }) => {
     ];
 
     return (
-        <Layout style={{ minHeight: '100vh' }}>
-            <Sider trigger={null} collapsible collapsed={collapsed} theme="dark">
+        <Layout style={{ minHeight: '100vh', maxHeight: '100vh', overflow: 'hidden' }}>
+            <Sider 
+                trigger={null} 
+                collapsible 
+                collapsed={collapsed} 
+                theme="dark"
+                style={{
+                    position: 'fixed',
+                    left: 0,
+                    top: 0,
+                    bottom: 0,
+                    height: '100vh',
+                    overflow: 'auto'
+                }}
+            >
                 <div style={{
                     height: 64,
                     display: 'flex',
@@ -67,13 +80,19 @@ const DefaultLayout = ({ children }) => {
                     items={menuItems}
                 />
             </Sider>
-            <Layout>
+            <Layout style={{ marginLeft: collapsed ? 80 : 200, transition: 'margin-left 0.2s' }}>
                 <Header style={{
                     padding: '0 24px',
                     background: colorBgContainer,
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'space-between'
+                    justifyContent: 'space-between',
+                    position: 'fixed',
+                    top: 0,
+                    right: 0,
+                    left: collapsed ? 80 : 200,
+                    zIndex: 999,
+                    transition: 'left 0.2s'
                 }}>
                     <Button
                         type="text"
@@ -89,8 +108,10 @@ const DefaultLayout = ({ children }) => {
                 </Header>
                 <Content style={{
                     margin: '24px 16px',
+                    marginTop: 88,
                     padding: 24,
-                    minHeight: 280,
+                    minHeight: 'calc(100vh - 112px)',
+                    maxHeight: 'calc(100vh - 112px)',
                     background: colorBgContainer,
                     borderRadius: borderRadiusLG,
                     overflow: 'auto'

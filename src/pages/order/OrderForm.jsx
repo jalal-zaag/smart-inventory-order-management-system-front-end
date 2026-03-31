@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Form, Input, Button, Card, Typography, Space, Table, InputNumber, Select, Divider, Alert } from 'antd';
+import { Form, Input, Button, Card, Typography, Space, InputNumber, Select, Divider, Alert } from 'antd';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import OrderService from '../../services/OrderService';
 import ProductService from '../../services/ProductService';
 import { ToastContext } from '../../context/ToastContextProvider';
 import { getErrorMessage, formatCurrency } from '../../utils/GenericUtils';
+import CustomTable from '../../components/common/CustomTable';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -192,7 +193,7 @@ const OrderForm = () => {
 
                     {orderItems.length > 0 ? (
                         <>
-                            <Table
+                            <CustomTable
                                 columns={itemColumns}
                                 dataSource={orderItems}
                                 rowKey="product"

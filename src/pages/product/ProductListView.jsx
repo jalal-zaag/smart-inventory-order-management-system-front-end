@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Table, Button, Space, Tag, Modal, Typography } from 'antd';
+import { Button, Space, Tag, Modal, Typography } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import ProductService from '../../services/ProductService';
@@ -7,6 +7,7 @@ import CategoryService from '../../services/CategoryService';
 import { ToastContext } from '../../context/ToastContextProvider';
 import { getErrorMessage, formatCurrency, getStatusColor } from '../../utils/GenericUtils';
 import SearchFilter from '../../components/common/SearchFilter';
+import CustomTable from '../../components/common/CustomTable';
 import CustomPagination from '../../components/common/CustomPagination';
 import useGetParamData from '../../hooks/useGetParamData';
 import { useQueryParams } from '../../hooks/useQueryParams';
@@ -197,7 +198,7 @@ const ProductListView = () => {
 
             <SearchFilter config={searchConfig} />
 
-            <Table
+            <CustomTable
                 columns={columns}
                 dataSource={products}
                 rowKey="id"

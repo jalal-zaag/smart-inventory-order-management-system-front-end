@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Table, Button, Tag, Modal, Typography, InputNumber, Space } from 'antd';
+import { Button, Tag, Modal, Typography, InputNumber, Space } from 'antd';
 import { ReloadOutlined } from '@ant-design/icons';
 import RestockService from '../../services/RestockService';
 import { ToastContext } from '../../context/ToastContextProvider';
 import { getErrorMessage, getStatusColor } from '../../utils/GenericUtils';
 import { formatDateTime } from '../../utils/DateFormatterUtils';
 import SearchFilter from '../../components/common/SearchFilter';
+import CustomTable from '../../components/common/CustomTable';
 import CustomPagination from '../../components/common/CustomPagination';
 import useGetParamData from '../../hooks/useGetParamData';
 import { useQueryParams } from '../../hooks/useQueryParams';
@@ -145,7 +146,7 @@ const RestockQueueView = () => {
                 </div>
             ) : (
                 <>
-                    <Table
+                    <CustomTable
                         columns={columns}
                         dataSource={queue}
                         rowKey="id"
