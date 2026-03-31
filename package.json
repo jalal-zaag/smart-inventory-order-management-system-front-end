@@ -8,7 +8,11 @@
     "build": "vite build",
     "preview": "vite preview"
   },
-  "keywords": ["inventory", "react", "vite"],
+  "keywords": [
+    "inventory",
+    "react",
+    "vite"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {

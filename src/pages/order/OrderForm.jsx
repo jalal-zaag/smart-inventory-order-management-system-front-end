@@ -26,8 +26,8 @@ const OrderForm = () => {
 
     const fetchProducts = async () => {
         try {
-            const response = await ProductService.getProductList({ status: 'Active' });
-            setProducts(response.data.products);
+            const response = await ProductService.getProductList({ status: 'Active', size: 100 });
+            setProducts(response.content || []);
         } catch (error) {
             showError(getErrorMessage(error));
         }
@@ -39,7 +39,7 @@ const OrderForm = () => {
             return;
         }
 
-        const product = products.find(p => p._id === selectedProduct);
+        const product = products.find(p => p.id === selectedProduct);
         
         if (orderItems.find(item => item.product === selectedProduct)) {
             showError('This product is already added to the order.');
@@ -52,7 +52,7 @@ const OrderForm = () => {
         }
 
         const newItem = {
-            product: product._id,
+            product: product.id,
             productName: product.name,
             quantity,
             price: product.price,
@@ -171,8 +171,8 @@ const OrderForm = () => {
                                 showSearch
                                 optionFilterProp="children"
                             >
-                                {products.filter(p => !orderItems.find(i => i.product === p._id)).map(p => (
-                                    <Option key={p._id} value={p._id}>
+                                {products.filter(p => !orderItems.find(i => i.product === p.id)).map(p => (
+                                    <Option key={p.id} value={p.id}>
                                         {p.name} - {formatCurrency(p.price)} (Stock: {p.stockQuantity})
                                     </Option>
                                 ))}

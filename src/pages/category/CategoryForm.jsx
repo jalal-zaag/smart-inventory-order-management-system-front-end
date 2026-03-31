@@ -28,7 +28,7 @@ const CategoryForm = () => {
         setFetching(true);
         try {
             const response = await CategoryService.getCategory(id);
-            form.setFieldsValue(response.data.category);
+            form.setFieldsValue(response.category);
         } catch (error) {
             showError(getErrorMessage(error));
             navigate('/categories');

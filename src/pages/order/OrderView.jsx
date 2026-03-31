@@ -23,7 +23,7 @@ const OrderView = () => {
     const fetchOrder = async () => {
         try {
             const response = await OrderService.getOrder(id);
-            setOrder(response.data.order);
+            setOrder(response.order);
         } catch (error) {
             showError(getErrorMessage(error));
             navigate('/orders');

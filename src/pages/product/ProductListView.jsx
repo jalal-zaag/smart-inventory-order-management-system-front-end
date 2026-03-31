@@ -1,39 +1,64 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Table, Button, Space, Tag, Modal, Typography, Input, Select } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined, SearchOutlined } from '@ant-design/icons';
+import { Table, Button, Space, Tag, Modal, Typography } from 'antd';
+import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import ProductService from '../../services/ProductService';
+import CategoryService from '../../services/CategoryService';
 import { ToastContext } from '../../context/ToastContextProvider';
 import { getErrorMessage, formatCurrency, getStatusColor } from '../../utils/GenericUtils';
-import { formatDateTime } from '../../utils/DateFormatterUtils';
+import SearchFilter from '../../components/common/SearchFilter';
+import CustomPagination from '../../components/common/CustomPagination';
+import useGetParamData from '../../hooks/useGetParamData';
+import { useQueryParams } from '../../hooks/useQueryParams';
 
 const { Title } = Typography;
-const { Option } = Select;
 
 const ProductListView = () => {
     const [products, setProducts] = useState([]);
+    const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [searchText, setSearchText] = useState('');
-    const [statusFilter, setStatusFilter] = useState(null);
+    const [pagination, setPagination] = useState({ page: 1, size: 10, total: 0 });
     const navigate = useNavigate();
     const { showSuccess, showError } = useContext(ToastContext);
+    const { allParams } = useGetParamData();
+    const { updateSearchParams } = useQueryParams();
+
+    useEffect(() => {
+        fetchCategories();
+    }, []);
 
     useEffect(() => {
         fetchProducts();
-    }, [statusFilter]);
+    }, [allParams.page, allParams.size, allParams.search, allParams.status, allParams.category, allParams.lowStock]);
+
+    const fetchCategories = async () => {
+        try {
+            const response = await CategoryService.getCategoryList({ size: 100 });
+            setCategories(response.content || []);
+        } catch (error) {
+            console.error('Failed to load categories');
+        }
+    };
 
     const fetchProducts = async () => {
         setLoading(true);
         try {
-            const params = {};
-            if (statusFilter) params.status = statusFilter;
-            const response = await ProductService.getProductList(params);
-            setProducts(response.data.products);
+            const response = await ProductService.getProductList(allParams);
+            setProducts(response.content || []);
+            setPagination({
+                page: (response.number || 0) + 1,
+                size: response.size || 10,
+                total: response.totalElements || 0
+            });
         } catch (error) {
             showError(getErrorMessage(error));
         } finally {
             setLoading(false);
         }
+    };
+
+    const handlePageChange = ({ page, size }) => {
+        updateSearchParams({ page, size });
     };
 
     const handleDelete = (id, name) => {
@@ -54,14 +79,51 @@ const ProductListView = () => {
         });
     };
 
+    const searchConfig = [
+        {
+            type: 'input',
+            query: 'search',
+            placeholder: 'Search products...',
+            width: 250
+        },
+        {
+            type: 'select',
+            query: 'status',
+            placeholder: 'Status',
+            width: 150,
+            options: [
+                { value: 'all', label: 'All Status' },
+                { value: 'Active', label: 'Active' },
+                { value: 'Out of Stock', label: 'Out of Stock' }
+            ]
+        },
+        {
+            type: 'select',
+            query: 'category',
+            placeholder: 'Category',
+            width: 180,
+            options: [
+                { value: 'all', label: 'All Categories' },
+                ...categories.map(cat => ({ value: cat.id, label: cat.name }))
+            ]
+        },
+        {
+            type: 'select',
+            query: 'lowStock',
+            placeholder: 'Stock Level',
+            width: 150,
+            options: [
+                { value: 'all', label: 'All Stock' },
+                { value: 'true', label: 'Low Stock Only' }
+            ]
+        }
+    ];
+
     const columns = [
         {
             title: 'Name',
             dataIndex: 'name',
-            key: 'name',
-            filteredValue: [searchText],
-            onFilter: (value, record) =>
-                record.name.toLowerCase().includes(value.toLowerCase())
+            key: 'name'
         },
         {
             title: 'Category',
@@ -103,7 +165,7 @@ const ProductListView = () => {
                     <Button
                         type="link"
                         icon={<EditOutlined />}
-                        onClick={() => navigate(`/products/${record._id}/edit`)}
+                        onClick={() => navigate(`/products/${record.id}/edit`)}
                     >
                         Edit
                     </Button>
@@ -111,7 +173,7 @@ const ProductListView = () => {
                         type="link"
                         danger
                         icon={<DeleteOutlined />}
-                        onClick={() => handleDelete(record._id, record.name)}
+                        onClick={() => handleDelete(record.id, record.name)}
                     >
                         Delete
                     </Button>
@@ -133,30 +195,19 @@ const ProductListView = () => {
                 </Button>
             </div>
 
-            <Space style={{ marginBottom: 16 }}>
-                <Input
-                    placeholder="Search products..."
-                    prefix={<SearchOutlined />}
-                    value={searchText}
-                    onChange={(e) => setSearchText(e.target.value)}
-                    style={{ width: 250 }}
-                />
-                <Select
-                    placeholder="Filter by status"
-                    allowClear
-                    style={{ width: 150 }}
-                    onChange={setStatusFilter}
-                >
-                    <Option value="Active">Active</Option>
-                    <Option value="Out of Stock">Out of Stock</Option>
-                </Select>
-            </Space>
+            <SearchFilter config={searchConfig} />
 
             <Table
                 columns={columns}
                 dataSource={products}
-                rowKey="_id"
+                rowKey="id"
                 loading={loading}
+                pagination={false}
+            />
+
+            <CustomPagination 
+                pagination={pagination}
+                onPageChange={handlePageChange}
             />
         </div>
     );

@@ -29,8 +29,8 @@ const ProductForm = () => {
 
     const fetchCategories = async () => {
         try {
-            const response = await CategoryService.getCategoryList();
-            setCategories(response.data.categories);
+            const response = await CategoryService.getCategoryList({ size: 100 });
+            setCategories(response.content || []);
         } catch (error) {
             showError(getErrorMessage(error));
         }
@@ -40,10 +40,10 @@ const ProductForm = () => {
         setFetching(true);
         try {
             const response = await ProductService.getProduct(id);
-            const product = response.data.product;
+            const product = response.product;
             form.setFieldsValue({
                 ...product,
-                category: product.category?._id || product.category
+                category: product.category?.id || product.category
             });
         } catch (error) {
             showError(getErrorMessage(error));
@@ -101,7 +101,7 @@ const ProductForm = () => {
                     >
                         <Select placeholder="Select category">
                             {categories.map(cat => (
-                                <Option key={cat._id} value={cat._id}>{cat.name}</Option>
+                                <Option key={cat.id} value={cat.id}>{cat.name}</Option>
                             ))}
                         </Select>
                     </Form.Item>

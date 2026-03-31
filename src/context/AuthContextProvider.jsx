@@ -19,7 +19,7 @@ export const AuthContextProvider = ({ children }) => {
         if (token) {
             try {
                 const response = await AuthService.getMe();
-                setUser(response.data.user);
+                setUser(response.user);
                 setIsAuthenticated(true);
             } catch (error) {
                 logout();
@@ -30,7 +30,7 @@ export const AuthContextProvider = ({ children }) => {
 
     const login = async (credentials) => {
         const response = await AuthService.login(credentials);
-        const { token, user } = response.data;
+        const { token, user } = response;
         localStorage.setItem(ACCESS_TOKEN, token);
         localStorage.setItem(PROFILE, JSON.stringify(user));
         setUser(user);
@@ -40,7 +40,7 @@ export const AuthContextProvider = ({ children }) => {
 
     const register = async (userData) => {
         const response = await AuthService.register(userData);
-        const { token, user } = response.data;
+        const { token, user } = response;
         localStorage.setItem(ACCESS_TOKEN, token);
         localStorage.setItem(PROFILE, JSON.stringify(user));
         setUser(user);

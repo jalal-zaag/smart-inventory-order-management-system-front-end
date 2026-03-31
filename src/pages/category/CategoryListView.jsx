@@ -1,35 +1,50 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Table, Button, Space, Tag, Modal, Typography, Input } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined, SearchOutlined } from '@ant-design/icons';
+import { Table, Button, Space, Modal, Typography } from 'antd';
+import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import CategoryService from '../../services/CategoryService';
 import { ToastContext } from '../../context/ToastContextProvider';
 import { getErrorMessage } from '../../utils/GenericUtils';
 import { formatDateTime } from '../../utils/DateFormatterUtils';
+import SearchFilter from '../../components/common/SearchFilter';
+import CustomPagination from '../../components/common/CustomPagination';
+import useGetParamData from '../../hooks/useGetParamData';
+import { useQueryParams } from '../../hooks/useQueryParams';
 
 const { Title } = Typography;
 
 const CategoryListView = () => {
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [searchText, setSearchText] = useState('');
+    const [pagination, setPagination] = useState({ page: 1, size: 10, total: 0 });
     const navigate = useNavigate();
     const { showSuccess, showError } = useContext(ToastContext);
+    const { allParams } = useGetParamData();
+    const { updateSearchParams } = useQueryParams();
 
     useEffect(() => {
         fetchCategories();
-    }, []);
+    }, [allParams.page, allParams.size, allParams.search]);
 
     const fetchCategories = async () => {
         setLoading(true);
         try {
-            const response = await CategoryService.getCategoryList();
-            setCategories(response.data.categories);
+            const response = await CategoryService.getCategoryList(allParams);
+            setCategories(response.content || []);
+            setPagination({
+                page: (response.number || 0) + 1,
+                size: response.size || 10,
+                total: response.totalElements || 0
+            });
         } catch (error) {
             showError(getErrorMessage(error));
         } finally {
             setLoading(false);
         }
+    };
+
+    const handlePageChange = ({ page, size }) => {
+        updateSearchParams({ page, size });
     };
 
     const handleDelete = (id, name) => {
@@ -50,14 +65,20 @@ const CategoryListView = () => {
         });
     };
 
+    const searchConfig = [
+        {
+            type: 'input',
+            query: 'search',
+            placeholder: 'Search categories...',
+            width: 280
+        }
+    ];
+
     const columns = [
         {
             title: 'Name',
             dataIndex: 'name',
-            key: 'name',
-            filteredValue: [searchText],
-            onFilter: (value, record) =>
-                record.name.toLowerCase().includes(value.toLowerCase())
+            key: 'name'
         },
         {
             title: 'Description',
@@ -79,7 +100,7 @@ const CategoryListView = () => {
                     <Button
                         type="link"
                         icon={<EditOutlined />}
-                        onClick={() => navigate(`/categories/${record._id}/edit`)}
+                        onClick={() => navigate(`/categories/${record.id}/edit`)}
                     >
                         Edit
                     </Button>
@@ -87,7 +108,7 @@ const CategoryListView = () => {
                         type="link"
                         danger
                         icon={<DeleteOutlined />}
-                        onClick={() => handleDelete(record._id, record.name)}
+                        onClick={() => handleDelete(record.id, record.name)}
                     >
                         Delete
                     </Button>
@@ -109,19 +130,19 @@ const CategoryListView = () => {
                 </Button>
             </div>
 
-            <Input
-                placeholder="Search categories..."
-                prefix={<SearchOutlined />}
-                value={searchText}
-                onChange={(e) => setSearchText(e.target.value)}
-                style={{ width: 300, marginBottom: 16 }}
-            />
+            <SearchFilter config={searchConfig} />
 
             <Table
                 columns={columns}
                 dataSource={categories}
-                rowKey="_id"
+                rowKey="id"
                 loading={loading}
+                pagination={false}
+            />
+
+            <CustomPagination 
+                pagination={pagination}
+                onPageChange={handlePageChange}
             />
         </div>
     );

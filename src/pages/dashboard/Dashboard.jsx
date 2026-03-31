@@ -31,8 +31,8 @@ const Dashboard = () => {
                 DashboardService.getDashboardStats(),
                 DashboardService.getRecentActivities({ limit: 10 })
             ]);
-            setStats(statsRes.data.stats);
-            setActivities(activitiesRes.data.activities);
+            setStats(statsRes.stats);
+            setActivities(activitiesRes.activities);
         } catch (error) {
             showError(getErrorMessage(error));
         } finally {

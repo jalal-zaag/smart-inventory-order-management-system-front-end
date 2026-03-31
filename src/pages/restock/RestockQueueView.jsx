@@ -5,31 +5,47 @@ import RestockService from '../../services/RestockService';
 import { ToastContext } from '../../context/ToastContextProvider';
 import { getErrorMessage, getStatusColor } from '../../utils/GenericUtils';
 import { formatDateTime } from '../../utils/DateFormatterUtils';
+import SearchFilter from '../../components/common/SearchFilter';
+import CustomPagination from '../../components/common/CustomPagination';
+import useGetParamData from '../../hooks/useGetParamData';
+import { useQueryParams } from '../../hooks/useQueryParams';
 
 const { Title } = Typography;
 
 const RestockQueueView = () => {
     const [queue, setQueue] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [pagination, setPagination] = useState({ page: 1, size: 10, total: 0 });
     const [restockModalVisible, setRestockModalVisible] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
     const [restockQuantity, setRestockQuantity] = useState(10);
     const { showSuccess, showError } = useContext(ToastContext);
+    const { allParams } = useGetParamData();
+    const { updateSearchParams } = useQueryParams();
 
     useEffect(() => {
         fetchQueue();
-    }, []);
+    }, [allParams.page, allParams.size, allParams.priority]);
 
     const fetchQueue = async () => {
         setLoading(true);
         try {
-            const response = await RestockService.getRestockQueue();
-            setQueue(response.data.queue);
+            const response = await RestockService.getRestockQueue(allParams);
+            setQueue(response.content || []);
+            setPagination({
+                page: (response.number || 0) + 1,
+                size: response.size || 10,
+                total: response.totalElements || 0
+            });
         } catch (error) {
             showError(getErrorMessage(error));
         } finally {
             setLoading(false);
         }
+    };
+
+    const handlePageChange = ({ page, size }) => {
+        updateSearchParams({ page, size });
     };
 
     const openRestockModal = (item) => {
@@ -40,7 +56,7 @@ const RestockQueueView = () => {
 
     const handleRestock = async () => {
         try {
-            await RestockService.restockProduct(selectedItem._id, { quantity: restockQuantity });
+            await RestockService.restockProduct(selectedItem.id, { quantity: restockQuantity });
             showSuccess('Product restocked successfully');
             setRestockModalVisible(false);
             fetchQueue();
@@ -48,6 +64,21 @@ const RestockQueueView = () => {
             showError(getErrorMessage(error));
         }
     };
+
+    const searchConfig = [
+        {
+            type: 'select',
+            query: 'priority',
+            placeholder: 'Priority',
+            width: 150,
+            options: [
+                { value: 'all', label: 'All Priorities' },
+                { value: 'High', label: 'High' },
+                { value: 'Medium', label: 'Medium' },
+                { value: 'Low', label: 'Low' }
+            ]
+        }
+    ];
 
     const columns = [
         {
@@ -105,18 +136,28 @@ const RestockQueueView = () => {
                 <Button onClick={fetchQueue} icon={<ReloadOutlined />}>Refresh</Button>
             </div>
 
-            {queue.length === 0 ? (
+            <SearchFilter config={searchConfig} />
+
+            {queue.length === 0 && !loading ? (
                 <div style={{ textAlign: 'center', padding: 50 }}>
                     <Title level={4} type="secondary">No items in restock queue</Title>
                     <p>All products are sufficiently stocked!</p>
                 </div>
             ) : (
-                <Table
-                    columns={columns}
-                    dataSource={queue}
-                    rowKey="_id"
-                    loading={loading}
-                />
+                <>
+                    <Table
+                        columns={columns}
+                        dataSource={queue}
+                        rowKey="id"
+                        loading={loading}
+                        pagination={false}
+                    />
+
+                    <CustomPagination 
+                        pagination={pagination}
+                        onPageChange={handlePageChange}
+                    />
+                </>
             )}
 
             <Modal
