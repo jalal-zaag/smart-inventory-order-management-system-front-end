@@ -11,6 +11,7 @@ import CustomTable from '../../components/common/CustomTable';
 import CustomPagination from '../../components/common/CustomPagination';
 import useGetParamData from '../../hooks/useGetParamData';
 import { useQueryParams } from '../../hooks/useQueryParams';
+import { TOTAL_CONTENT_HEIGHT } from '../../constant/ConstantVariables';
 
 const { Title } = Typography;
 
@@ -139,6 +140,9 @@ const CategoryListView = () => {
                 rowKey="id"
                 loading={loading}
                 pagination={false}
+                 scroll={{
+                        y: (window.innerHeight - TOTAL_CONTENT_HEIGHT) -10
+                    }}
             />
 
             <CustomPagination 

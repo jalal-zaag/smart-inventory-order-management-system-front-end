@@ -10,3 +10,5 @@ export const TIME_FORMAT = "HH:mm";
 // Pagination defaults
 export const DEFAULT_PAGE_SIZE = 10;
 export const PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
+
+export const TOTAL_CONTENT_HEIGHT = 20 + 78 + 40 + 72 + 55 + 64 + 30 + 43;
