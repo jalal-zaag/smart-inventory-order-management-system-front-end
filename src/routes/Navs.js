@@ -3,7 +3,8 @@ import {
     ShoppingCartOutlined,
     AppstoreOutlined,
     TagsOutlined,
-    WarningOutlined
+    WarningOutlined,
+    HistoryOutlined
 } from '@ant-design/icons';
 import * as SLUG from './Slug';
 
@@ -37,5 +38,11 @@ export const navItems = [
         icon: WarningOutlined,
         label: 'Restock Queue',
         path: SLUG.RESTOCK_QUEUE
+    },
+    {
+        key: 'activity-log',
+        icon: HistoryOutlined,
+        label: 'Activity Log',
+        path: SLUG.ACTIVITY_LOG
     }
 ];

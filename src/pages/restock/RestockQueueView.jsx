@@ -133,9 +133,8 @@ const RestockQueueView = () => {
 
     return (
         <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
+            <div style={{ marginBottom: 16 }}>
                 <Title level={3}>Restock Queue</Title>
-                <Button onClick={fetchQueue} icon={<ReloadOutlined />}>Refresh</Button>
             </div>
 
             <SearchFilter config={searchConfig} />

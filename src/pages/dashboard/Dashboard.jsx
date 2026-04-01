@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Row, Col, Card, Statistic, Table, Tag, Typography, List, Spin, Segmented } from 'antd';
+import { Row, Col, Card, Statistic, Table, Tag, Typography, Spin, Segmented } from 'antd';
 import {
     ShoppingCartOutlined,
     DollarOutlined,
@@ -13,14 +13,12 @@ import DashboardService from '../../services/DashboardService';
 import { ToastContext } from '../../context/ToastContextProvider';
 import { AuthContext } from '../../context/AuthContextProvider';
 import { getErrorMessage, formatCurrency, getStatusColor } from '../../utils/GenericUtils';
-import { formatRelativeTime } from '../../utils/DateFormatterUtils';
 
 const { Title, Text } = Typography;
 
 const Dashboard = () => {
     const [loading, setLoading] = useState(true);
     const [stats, setStats] = useState(null);
-    const [activities, setActivities] = useState([]);
     const [chartData, setChartData] = useState([]);
     const [chartType, setChartType] = useState('orders');
     const [chartDays, setChartDays] = useState(7);
@@ -38,13 +36,11 @@ const Dashboard = () => {
     const fetchData = async () => {
         setLoading(true);
         try {
-            const [statsRes, activitiesRes, chartRes] = await Promise.all([
+            const [statsRes, chartRes] = await Promise.all([
                 DashboardService.getDashboardStats(),
-                DashboardService.getRecentActivities({ limit: 10 }),
                 DashboardService.getChartData({ days: chartDays })
             ]);
             setStats(statsRes.stats);
-            setActivities(activitiesRes.activities);
             setChartData(chartRes.chartData || []);
         } catch (error) {
             showError(getErrorMessage(error));
@@ -246,7 +242,7 @@ const Dashboard = () => {
             </Row>
 
             <Row gutter={[16, 16]} style={{ marginTop: 24 }}>
-                <Col xs={24} lg={12}>
+                <Col xs={24}>
                     <Card title="Product Summary">
                         <Table
                             columns={productColumns}
@@ -254,23 +250,6 @@ const Dashboard = () => {
                             rowKey="name"
                             pagination={false}
                             size="small"
-                        />
-                    </Card>
-                </Col>
-                <Col xs={24} lg={12}>
-                    <Card title="Recent Activities">
-                        <List
-                            size="small"
-                            dataSource={activities}
-                            renderItem={(item) => (
-                                <List.Item>
-                                    <List.Item.Meta
-                                        title={item.action}
-                                        description={item.description}
-                                    />
-                                    <div>{formatRelativeTime(item.createdAt)}</div>
-                                </List.Item>
-                            )}
                         />
                     </Card>
                 </Col>

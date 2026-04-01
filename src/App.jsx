@@ -30,6 +30,9 @@ import OrderView from './pages/order/OrderView';
 // Restock Queue
 import RestockQueueView from './pages/restock/RestockQueueView';
 
+// Activity Log
+import ActivityLogView from './pages/activity/ActivityLogView';
+
 const theme = {
     token: {
         colorPrimary: '#1890ff',
@@ -111,6 +114,13 @@ function App() {
                             <Route path="/restock-queue" element={
                                 <PrivateRoute>
                                     <DefaultLayout><RestockQueueView /></DefaultLayout>
+                                </PrivateRoute>
+                            } />
+
+                            {/* Activity Log */}
+                            <Route path="/activity-log" element={
+                                <PrivateRoute>
+                                    <DefaultLayout><ActivityLogView /></DefaultLayout>
                                 </PrivateRoute>
                             } />
 
