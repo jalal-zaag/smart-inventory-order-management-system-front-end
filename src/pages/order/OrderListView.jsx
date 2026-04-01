@@ -118,24 +118,28 @@ const OrderListView = () => {
         {
             title: 'Customer',
             dataIndex: 'customerName',
-            key: 'customerName'
+            key: 'customerName',
+            width: 180
         },
         {
             title: 'Items',
             dataIndex: 'items',
             key: 'items',
+            width: 100,
             render: (items) => items?.length || 0
         },
         {
             title: 'Total',
             dataIndex: 'totalPrice',
             key: 'totalPrice',
+            width: 120,
             render: (price) => formatCurrency(price)
         },
         {
             title: 'Status',
             dataIndex: 'status',
             key: 'status',
+            width: 150,
             render: (status, record) => (
                 <Select
                     value={status}
@@ -155,11 +159,14 @@ const OrderListView = () => {
             title: 'Created',
             dataIndex: 'createdAt',
             key: 'createdAt',
+            width: 180,
             render: (date) => formatDateTime(date)
         },
         {
             title: 'Actions',
             key: 'actions',
+            width: 200,
+            align: "center",
             render: (_, record) => (
                 <Space>
                     <Button

@@ -98,6 +98,7 @@ const CustomerListView = () => {
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
+            width: 200,
             render: (text, record) => (
                 <Space>
                     <UserOutlined />
@@ -108,12 +109,14 @@ const CustomerListView = () => {
         {
             title: 'Email',
             dataIndex: 'email',
-            key: 'email'
+            key: 'email',
+            width: 250
         },
         {
             title: 'Role',
             dataIndex: 'role',
             key: 'role',
+            width: 120,
             render: (role) => (
                 <Tag color={role === 'admin' ? 'red' : 'blue'}>
                     {role.toUpperCase()}
@@ -124,11 +127,13 @@ const CustomerListView = () => {
             title: 'Registered At',
             dataIndex: 'createdAt',
             key: 'createdAt',
+            width: 180,
             render: (date) => formatDateTime(date)
         },
         {
             title: 'Actions',
             key: 'actions',
+            width: 150,
             render: (_, record) => (
                 <Space>
                     {canDelete ? (

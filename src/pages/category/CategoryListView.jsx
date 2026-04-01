@@ -88,7 +88,8 @@ const CategoryListView = () => {
         {
             title: 'Name',
             dataIndex: 'name',
-            key: 'name'
+            key: 'name',
+            width: 250
         },
         {
             title: 'Description',
@@ -100,11 +101,14 @@ const CategoryListView = () => {
             title: 'Created At',
             dataIndex: 'createdAt',
             key: 'createdAt',
+            width: 180,
             render: (date) => formatDateTime(date)
         },
         {
             title: 'Actions',
             key: 'actions',
+            width: 200,
+            align: "center",
             render: (_, record) => (
                 <Space>
                     {canEdit ? (

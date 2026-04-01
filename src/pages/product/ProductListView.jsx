@@ -133,23 +133,27 @@ const ProductListView = () => {
         {
             title: 'Name',
             dataIndex: 'name',
-            key: 'name'
+            key: 'name',
+            width: 200
         },
         {
             title: 'Category',
             dataIndex: 'categoryName',
-            key: 'categoryName'
+            key: 'categoryName',
+            width: 150
         },
         {
             title: 'Price',
             dataIndex: 'price',
             key: 'price',
+            width: 120,
             render: (price) => formatCurrency(price)
         },
         {
             title: 'Stock',
             dataIndex: 'stockQuantity',
             key: 'stockQuantity',
+            width: 100,
             render: (stock, record) => (
                 <span style={{ color: stock < record.minStockThreshold ? '#ff4d4f' : 'inherit' }}>
                     {stock} {stock < record.minStockThreshold && '(Low)'}
@@ -159,17 +163,21 @@ const ProductListView = () => {
         {
             title: 'Min Threshold',
             dataIndex: 'minStockThreshold',
-            key: 'minStockThreshold'
+            key: 'minStockThreshold',
+            width: 140
         },
         {
             title: 'Status',
             dataIndex: 'status',
             key: 'status',
+            width: 90,
             render: (status) => <Tag color={getStatusColor(status)}>{status}</Tag>
         },
         {
             title: 'Actions',
             key: 'actions',
+            width: 200,
+            align: "center",
             render: (_, record) => (
                 <Space>
                     {canEdit ? (
