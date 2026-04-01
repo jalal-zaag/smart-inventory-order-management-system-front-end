@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Typography, Tag, Button } from 'antd';
 import { ReloadOutlined } from '@ant-design/icons';
-import DashboardService from '../../services/DashboardService';
+import ActivityLogService from '../../services/ActivityLogService';
 import { ToastContext } from '../../context/ToastContextProvider';
-import { getErrorMessage, getStatusColor } from '../../utils/GenericUtils';
+import { getErrorMessage } from '../../utils/GenericUtils';
 import { formatDateTime } from '../../utils/DateFormatterUtils';
 import SearchFilter from '../../components/common/SearchFilter';
 import CustomTable from '../../components/common/CustomTable';
@@ -24,34 +24,17 @@ const ActivityLogView = () => {
 
     useEffect(() => {
         fetchActivities();
-    }, [allParams.page, allParams.size, allParams.resourceType]);
+    }, [allParams.page, allParams.size, allParams.search, allParams.resourceType]);
 
     const fetchActivities = async () => {
         setLoading(true);
         try {
-            const limit = allParams.size || 10;
-            const response = await DashboardService.getRecentActivities({ limit: 100 });
-            
-            let filteredActivities = response.activities || [];
-            
-            // Filter by resource type if specified
-            if (allParams.resourceType && allParams.resourceType !== 'all') {
-                filteredActivities = filteredActivities.filter(
-                    a => a.resourceType === allParams.resourceType
-                );
-            }
-
-            // Manual pagination
-            const page = parseInt(allParams.page) || 1;
-            const size = parseInt(allParams.size) || 10;
-            const startIndex = (page - 1) * size;
-            const paginatedActivities = filteredActivities.slice(startIndex, startIndex + size);
-
-            setActivities(paginatedActivities);
+            const response = await ActivityLogService.getActivityLogList(allParams);
+            setActivities(response.content || []);
             setPagination({
-                page,
-                size,
-                total: filteredActivities.length
+                page: (response.number || 0) + 1,
+                size: response.size || 10,
+                total: response.totalElements || 0
             });
         } catch (error) {
             showError(getErrorMessage(error));
@@ -85,6 +68,12 @@ const ActivityLogView = () => {
     };
 
     const searchConfig = [
+        {
+            type: 'input',
+            query: 'search',
+            placeholder: 'Search activities...',
+            width: 280
+        },
         {
             type: 'select',
             query: 'resourceType',
@@ -122,6 +111,12 @@ const ActivityLogView = () => {
             render: (type) => <Tag color={getResourceTypeColor(type)}>{type}</Tag>
         },
         {
+            title: 'User',
+            dataIndex: 'userName',
+            key: 'userName',
+            width: 150
+        },
+        {
             title: 'Timestamp',
             dataIndex: 'createdAt',
             key: 'createdAt',
@@ -142,7 +137,7 @@ const ActivityLogView = () => {
             <CustomTable
                 columns={columns}
                 dataSource={activities}
-                rowKey="_id"
+                rowKey="id"
                 loading={loading}
                 pagination={false}
                 scroll={{
