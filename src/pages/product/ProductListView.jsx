@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Button, Space, Tag, Modal, Typography, Tooltip } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined, LockOutlined } from '@ant-design/icons';
+import { Button, Space, Tag, Modal, Typography } from 'antd';
+import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import ProductService from '../../services/ProductService';
 import CategoryService from '../../services/CategoryService';
@@ -23,13 +23,15 @@ const ProductListView = () => {
     const [pagination, setPagination] = useState({ page: 1, size: 10, total: 0 });
     const navigate = useNavigate();
     const { showSuccess, showError } = useContext(ToastContext);
-    const { isManagerOrAbove, isAdmin } = useContext(AuthContext);
+    const { isAdmin } = useContext(AuthContext);
     const { allParams } = useGetParamData();
     const { updateSearchParams } = useQueryParams();
 
-    const canCreate = isManagerOrAbove();
-    const canEdit = isManagerOrAbove();
-    const canDelete = isAdmin();
+    // All users can create, edit, delete their own data
+    // (Backend enforces ownership - users can only modify their own data)
+    const canCreate = true;
+    const canEdit = true;
+    const canDelete = true;
 
     useEffect(() => {
         fetchCategories();
@@ -178,11 +180,7 @@ const ProductListView = () => {
                         >
                             Edit
                         </Button>
-                    ) : (
-                        <Tooltip title="Only Managers and Admins can edit">
-                            <Button type="link" icon={<LockOutlined />} disabled>Edit</Button>
-                        </Tooltip>
-                    )}
+                    ) : null}
                     {canDelete ? (
                         <Button
                             type="link"
@@ -192,11 +190,7 @@ const ProductListView = () => {
                         >
                             Delete
                         </Button>
-                    ) : (
-                        <Tooltip title="Only Admins can delete">
-                            <Button type="link" danger icon={<LockOutlined />} disabled>Delete</Button>
-                        </Tooltip>
-                    )}
+                    ) : null}
                 </Space>
             )
         }
@@ -214,13 +208,7 @@ const ProductListView = () => {
                     >
                         Add Product
                     </Button>
-                ) : (
-                    <Tooltip title="Only Managers and Admins can add products">
-                        <Button type="primary" icon={<LockOutlined />} disabled>
-                            Add Product
-                        </Button>
-                    </Tooltip>
-                )}
+                ) : null}
             </div>
 
             <SearchFilter config={searchConfig} />

@@ -5,12 +5,13 @@ import { AuthContext } from '../context/AuthContextProvider';
 
 /**
  * RoleBasedRoute - Protects routes based on user roles
+ * Simplified to support only 'admin' and 'user' roles
  * @param {ReactNode} children - The component to render if authorized
- * @param {string[]} allowedRoles - Array of roles that can access this route
- * @param {string} requiredRole - Single role required (uses hierarchy - user with higher role can access)
+ * @param {boolean} adminOnly - If true, only admin can access this route
+ * @param {string[]} allowedRoles - Array of roles that can access this route (legacy support)
  */
-const RoleBasedRoute = ({ children, allowedRoles, requiredRole }) => {
-    const { isAuthenticated, loading, hasRole, hasAnyRole, user } = useContext(AuthContext);
+const RoleBasedRoute = ({ children, adminOnly = false, allowedRoles }) => {
+    const { isAuthenticated, loading, isAdmin, user } = useContext(AuthContext);
 
     if (loading) {
         return (
@@ -28,10 +29,10 @@ const RoleBasedRoute = ({ children, allowedRoles, requiredRole }) => {
     // Check authorization
     let isAuthorized = true;
 
-    if (requiredRole) {
-        isAuthorized = hasRole(requiredRole);
+    if (adminOnly) {
+        isAuthorized = isAdmin();
     } else if (allowedRoles && allowedRoles.length > 0) {
-        isAuthorized = hasAnyRole(...allowedRoles);
+        isAuthorized = allowedRoles.includes(user?.role);
     }
 
     // Not authorized - show forbidden page
@@ -39,8 +40,8 @@ const RoleBasedRoute = ({ children, allowedRoles, requiredRole }) => {
         return (
             <Result
                 status="403"
-                title="403"
-                subTitle={`Sorry, you don't have permission to access this page. Your role: ${user?.role || 'unknown'}`}
+                title="Access Denied"
+                subTitle={`This page requires admin access. Your role: ${user?.role || 'unknown'}`}
                 extra={
                     <Button type="primary" onClick={() => window.history.back()}>
                         Go Back

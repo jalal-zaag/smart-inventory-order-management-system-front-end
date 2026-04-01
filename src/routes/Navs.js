@@ -8,6 +8,7 @@ import {
 } from '@ant-design/icons';
 import * as SLUG from './Slug';
 
+// All navigation items visible to all users
 export const navItems = [
     {
         key: 'dashboard',
@@ -46,3 +47,6 @@ export const navItems = [
         path: SLUG.ACTIVITY_LOG
     }
 ];
+
+// All users see all nav items
+export const getNavItemsForRole = () => navItems;

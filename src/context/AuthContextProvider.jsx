@@ -5,11 +5,10 @@ import { getErrorMessage } from '../utils/GenericUtils';
 
 export const AuthContext = createContext();
 
-// Role hierarchy: admin > manager > staff
-const ROLE_HIERARCHY = {
-    admin: 3,
-    manager: 2,
-    staff: 1
+// Simplified role system: admin and user only
+const ROLES = {
+    admin: 'admin',
+    user: 'user'
 };
 
 export const AuthContextProvider = ({ children }) => {
@@ -62,23 +61,27 @@ export const AuthContextProvider = ({ children }) => {
         setIsAuthenticated(false);
     };
 
-    // Check if user has required role (or higher)
+    // Check if user is admin (full access)
+    const isAdmin = () => user?.role === ROLES.admin;
+
+    // Check if user is regular user
+    const isUser = () => user?.role === ROLES.user;
+
+    // For backward compatibility - maps to isAdmin
     const hasRole = (requiredRole) => {
         if (!user?.role) return false;
-        return ROLE_HIERARCHY[user.role] >= ROLE_HIERARCHY[requiredRole];
+        if (requiredRole === 'admin') return isAdmin();
+        return true; // Any authenticated user can access non-admin routes
     };
 
-    // Check if user has any of the allowed roles
+    // For backward compatibility
     const hasAnyRole = (...roles) => {
         if (!user?.role) return false;
         return roles.includes(user.role);
     };
 
-    // Check if user is admin
-    const isAdmin = () => user?.role === 'admin';
-
-    // Check if user is manager or admin
-    const isManagerOrAbove = () => hasRole('manager');
+    // For backward compatibility - now same as isAdmin
+    const isManagerOrAbove = () => isAdmin();
 
     return (
         <AuthContext.Provider value={{
@@ -92,6 +95,7 @@ export const AuthContextProvider = ({ children }) => {
             hasRole,
             hasAnyRole,
             isAdmin,
+            isUser,
             isManagerOrAbove
         }}>
             {children}

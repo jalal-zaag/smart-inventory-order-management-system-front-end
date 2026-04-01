@@ -52,14 +52,14 @@ function App() {
                             <Route path="/login" element={<Login />} />
                             <Route path="/register" element={<Register />} />
 
-                            {/* Private Routes */}
+                            {/* All routes accessible to all authenticated users */}
                             <Route path="/dashboard" element={
                                 <PrivateRoute>
                                     <DefaultLayout><Dashboard /></DefaultLayout>
                                 </PrivateRoute>
                             } />
 
-                            {/* Categories */}
+                            {/* Categories - All users can CRUD their own */}
                             <Route path="/categories" element={
                                 <PrivateRoute>
                                     <DefaultLayout><CategoryListView /></DefaultLayout>
@@ -76,7 +76,7 @@ function App() {
                                 </PrivateRoute>
                             } />
 
-                            {/* Products */}
+                            {/* Products - All users can CRUD their own */}
                             <Route path="/products" element={
                                 <PrivateRoute>
                                     <DefaultLayout><ProductListView /></DefaultLayout>
@@ -93,7 +93,7 @@ function App() {
                                 </PrivateRoute>
                             } />
 
-                            {/* Orders */}
+                            {/* Orders - All users can CRUD their own */}
                             <Route path="/orders" element={
                                 <PrivateRoute>
                                     <DefaultLayout><OrderListView /></DefaultLayout>
@@ -110,14 +110,14 @@ function App() {
                                 </PrivateRoute>
                             } />
 
-                            {/* Restock Queue */}
+                            {/* Restock Queue - All users */}
                             <Route path="/restock-queue" element={
                                 <PrivateRoute>
                                     <DefaultLayout><RestockQueueView /></DefaultLayout>
                                 </PrivateRoute>
                             } />
 
-                            {/* Activity Log */}
+                            {/* Activity Log - All users */}
                             <Route path="/activity-log" element={
                                 <PrivateRoute>
                                     <DefaultLayout><ActivityLogView /></DefaultLayout>

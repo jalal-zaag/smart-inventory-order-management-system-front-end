@@ -60,9 +60,9 @@ const Dashboard = () => {
 
     const getRoleBadgeColor = (role) => {
         switch (role) {
-            case 'admin': return 'red';
-            case 'manager': return 'blue';
-            default: return 'green';
+            case 'admin': return 'purple';
+            case 'user': return 'blue';
+            default: return 'default';
         }
     };
 
