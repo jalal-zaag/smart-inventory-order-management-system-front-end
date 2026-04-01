@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Button, Space, Tag, Modal, Typography } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Button, Space, Tag, Modal, Typography, Tooltip } from 'antd';
+import { PlusOutlined, EditOutlined, DeleteOutlined, LockOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import ProductService from '../../services/ProductService';
 import CategoryService from '../../services/CategoryService';
 import { ToastContext } from '../../context/ToastContextProvider';
+import { AuthContext } from '../../context/AuthContextProvider';
 import { getErrorMessage, formatCurrency, getStatusColor } from '../../utils/GenericUtils';
 import SearchFilter from '../../components/common/SearchFilter';
 import CustomTable from '../../components/common/CustomTable';
@@ -22,8 +23,13 @@ const ProductListView = () => {
     const [pagination, setPagination] = useState({ page: 1, size: 10, total: 0 });
     const navigate = useNavigate();
     const { showSuccess, showError } = useContext(ToastContext);
+    const { isManagerOrAbove, isAdmin } = useContext(AuthContext);
     const { allParams } = useGetParamData();
     const { updateSearchParams } = useQueryParams();
+
+    const canCreate = isManagerOrAbove();
+    const canEdit = isManagerOrAbove();
+    const canDelete = isAdmin();
 
     useEffect(() => {
         fetchCategories();
@@ -164,21 +170,33 @@ const ProductListView = () => {
             key: 'actions',
             render: (_, record) => (
                 <Space>
-                    <Button
-                        type="link"
-                        icon={<EditOutlined />}
-                        onClick={() => navigate(`/products/${record.id}/edit`)}
-                    >
-                        Edit
-                    </Button>
-                    <Button
-                        type="link"
-                        danger
-                        icon={<DeleteOutlined />}
-                        onClick={() => handleDelete(record.id, record.name)}
-                    >
-                        Delete
-                    </Button>
+                    {canEdit ? (
+                        <Button
+                            type="link"
+                            icon={<EditOutlined />}
+                            onClick={() => navigate(`/products/${record.id}/edit`)}
+                        >
+                            Edit
+                        </Button>
+                    ) : (
+                        <Tooltip title="Only Managers and Admins can edit">
+                            <Button type="link" icon={<LockOutlined />} disabled>Edit</Button>
+                        </Tooltip>
+                    )}
+                    {canDelete ? (
+                        <Button
+                            type="link"
+                            danger
+                            icon={<DeleteOutlined />}
+                            onClick={() => handleDelete(record.id, record.name)}
+                        >
+                            Delete
+                        </Button>
+                    ) : (
+                        <Tooltip title="Only Admins can delete">
+                            <Button type="link" danger icon={<LockOutlined />} disabled>Delete</Button>
+                        </Tooltip>
+                    )}
                 </Space>
             )
         }
@@ -188,13 +206,21 @@ const ProductListView = () => {
         <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
                 <Title level={3}>Products</Title>
-                <Button
-                    type="primary"
-                    icon={<PlusOutlined />}
-                    onClick={() => navigate('/products/create')}
-                >
-                    Add Product
-                </Button>
+                {canCreate ? (
+                    <Button
+                        type="primary"
+                        icon={<PlusOutlined />}
+                        onClick={() => navigate('/products/create')}
+                    >
+                        Add Product
+                    </Button>
+                ) : (
+                    <Tooltip title="Only Managers and Admins can add products">
+                        <Button type="primary" icon={<LockOutlined />} disabled>
+                            Add Product
+                        </Button>
+                    </Tooltip>
+                )}
             </div>
 
             <SearchFilter config={searchConfig} />

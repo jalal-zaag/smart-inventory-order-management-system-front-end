@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
-import { Form, Input, Button, Card, Typography, Space, Divider } from 'antd';
-import { UserOutlined, LockOutlined, MailOutlined } from '@ant-design/icons';
+import { Form, Input, Button, Card, Typography, Space, Divider, Dropdown } from 'antd';
+import { UserOutlined, LockOutlined, MailOutlined, DownOutlined } from '@ant-design/icons';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContextProvider';
 import { ToastContext } from '../../context/ToastContextProvider';
@@ -28,12 +28,24 @@ const Login = () => {
         }
     };
 
-    const handleDemoLogin = () => {
+    const demoAccounts = [
+        { label: 'Admin (Full Access)', email: 'admin@example.com', password: 'admin123' },
+        { label: 'Manager (Limited)', email: 'manager@example.com', password: 'manager123' },
+        { label: 'Staff (View Only)', email: 'demo@example.com', password: 'demo123' }
+    ];
+
+    const handleDemoLogin = (account) => {
         form.setFieldsValue({
-            email: 'demo@example.com',
-            password: 'demo123'
+            email: account.email,
+            password: account.password
         });
     };
+
+    const demoMenuItems = demoAccounts.map((account, index) => ({
+        key: index,
+        label: account.label,
+        onClick: () => handleDemoLogin(account)
+    }));
 
     return (
         <div style={{
@@ -75,9 +87,11 @@ const Login = () => {
                         </Form.Item>
 
                         <Form.Item>
-                            <Button onClick={handleDemoLogin} block>
-                                Demo Login (Fill Credentials)
-                            </Button>
+                            <Dropdown menu={{ items: demoMenuItems }} placement="bottom">
+                                <Button block>
+                                    Demo Login <DownOutlined />
+                                </Button>
+                            </Dropdown>
                         </Form.Item>
                     </Form>
 

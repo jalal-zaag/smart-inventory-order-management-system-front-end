@@ -5,6 +5,13 @@ import { getErrorMessage } from '../utils/GenericUtils';
 
 export const AuthContext = createContext();
 
+// Role hierarchy: admin > manager > staff
+const ROLE_HIERARCHY = {
+    admin: 3,
+    manager: 2,
+    staff: 1
+};
+
 export const AuthContextProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -55,6 +62,24 @@ export const AuthContextProvider = ({ children }) => {
         setIsAuthenticated(false);
     };
 
+    // Check if user has required role (or higher)
+    const hasRole = (requiredRole) => {
+        if (!user?.role) return false;
+        return ROLE_HIERARCHY[user.role] >= ROLE_HIERARCHY[requiredRole];
+    };
+
+    // Check if user has any of the allowed roles
+    const hasAnyRole = (...roles) => {
+        if (!user?.role) return false;
+        return roles.includes(user.role);
+    };
+
+    // Check if user is admin
+    const isAdmin = () => user?.role === 'admin';
+
+    // Check if user is manager or admin
+    const isManagerOrAbove = () => hasRole('manager');
+
     return (
         <AuthContext.Provider value={{
             user,
@@ -63,7 +88,11 @@ export const AuthContextProvider = ({ children }) => {
             login,
             register,
             logout,
-            checkAuth
+            checkAuth,
+            hasRole,
+            hasAnyRole,
+            isAdmin,
+            isManagerOrAbove
         }}>
             {children}
         </AuthContext.Provider>
