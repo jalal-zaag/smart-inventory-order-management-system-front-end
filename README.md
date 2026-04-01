@@ -1,5 +1,9 @@
 # Smart Inventory & Order Management System - Frontend
 
+## Live Demo
+
+🌐 [https://smart-inventory-order-management-sy.vercel.app/](https://smart-inventory-order-management-sy.vercel.app/)
+
 ## Installation
 
 ```bash
