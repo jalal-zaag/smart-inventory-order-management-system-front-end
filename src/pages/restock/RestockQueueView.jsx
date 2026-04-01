@@ -86,39 +86,46 @@ const RestockQueueView = () => {
         {
             title: 'Product',
             dataIndex: 'productName',
-            key: 'productName'
+            key: 'productName',
+            width: 250
         },
         {
             title: 'Current Stock',
             dataIndex: 'currentStock',
             key: 'currentStock',
+            width: 140,
             render: (stock) => <span style={{ color: stock === 0 ? '#ff4d4f' : '#faad14' }}>{stock}</span>
         },
         {
             title: 'Min Threshold',
             dataIndex: 'minStockThreshold',
-            key: 'minStockThreshold'
+            key: 'minStockThreshold',
+            width: 140
         },
         {
             title: 'Deficit',
             key: 'deficit',
+            width: 120,
             render: (_, record) => record.minStockThreshold - record.currentStock
         },
         {
             title: 'Priority',
             dataIndex: 'priority',
             key: 'priority',
+            width: 120,
             render: (priority) => <Tag color={getStatusColor(priority)}>{priority}</Tag>
         },
         {
             title: 'Added At',
             dataIndex: 'addedAt',
             key: 'addedAt',
+            width: 180,
             render: (date) => formatDateTime(date)
         },
         {
             title: 'Action',
             key: 'action',
+            width: 150,
             render: (_, record) => (
                 <Button
                     type="primary"
@@ -133,7 +140,9 @@ const RestockQueueView = () => {
 
     return (
         <div>
-            <Title level={3} style={{ marginBottom: 16 }}>Restock Queue</Title>
+            <div style={{ marginBottom: 16 }}>
+                <Title level={3}>Restock Queue</Title>
+            </div>
 
             <SearchFilter config={searchConfig} />
 

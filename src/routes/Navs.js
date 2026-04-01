@@ -3,16 +3,26 @@ import {
     ShoppingCartOutlined,
     AppstoreOutlined,
     TagsOutlined,
-    WarningOutlined
+    WarningOutlined,
+    HistoryOutlined,
+    TeamOutlined
 } from '@ant-design/icons';
 import * as SLUG from './Slug';
 
+// All navigation items - customers only shown to admins
 export const navItems = [
     {
         key: 'dashboard',
         icon: DashboardOutlined,
         label: 'Dashboard',
         path: SLUG.DASHBOARD
+    },
+    {
+        key: 'customers',
+        icon: TeamOutlined,
+        label: 'Customers',
+        path: SLUG.CUSTOMERS,
+        adminOnly: true  // Mark as admin-only
     },
     {
         key: 'categories',
@@ -37,5 +47,19 @@ export const navItems = [
         icon: WarningOutlined,
         label: 'Restock Queue',
         path: SLUG.RESTOCK_QUEUE
+    },
+    {
+        key: 'activity-log',
+        icon: HistoryOutlined,
+        label: 'Activity Log',
+        path: SLUG.ACTIVITY_LOG
     }
 ];
+
+// Get nav items based on user role - filter out admin-only items for non-admins
+export const getNavItemsForRole = (isAdminUser) => {
+    if (isAdminUser) {
+        return navItems; // Admins see everything
+    }
+    return navItems.filter(item => !item.adminOnly); // Regular users don't see admin-only items
+};

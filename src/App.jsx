@@ -5,6 +5,7 @@ import { AuthContextProvider } from './context/AuthContextProvider';
 import { ToastContextProvider } from './context/ToastContextProvider';
 import Interceptors from './rest-handlers/Interceptors';
 import PrivateRoute from './routes/PrivateRoute';
+import RoleBasedRoute from './routes/RoleBasedRoute';
 import DefaultLayout from './components/layout/DefaultLayout';
 
 // Auth Pages
@@ -30,6 +31,13 @@ import OrderView from './pages/order/OrderView';
 // Restock Queue
 import RestockQueueView from './pages/restock/RestockQueueView';
 
+// Activity Log
+import ActivityLogView from './pages/activity/ActivityLogView';
+
+// Customer Pages (Admin Only)
+import CustomerListView from './pages/customer/CustomerListView';
+import CustomerForm from './pages/customer/CustomerForm';
+
 const theme = {
     token: {
         colorPrimary: '#1890ff',
@@ -49,14 +57,14 @@ function App() {
                             <Route path="/login" element={<Login />} />
                             <Route path="/register" element={<Register />} />
 
-                            {/* Private Routes */}
+                            {/* All routes accessible to all authenticated users */}
                             <Route path="/dashboard" element={
                                 <PrivateRoute>
                                     <DefaultLayout><Dashboard /></DefaultLayout>
                                 </PrivateRoute>
                             } />
 
-                            {/* Categories */}
+                            {/* Categories - All users can CRUD their own */}
                             <Route path="/categories" element={
                                 <PrivateRoute>
                                     <DefaultLayout><CategoryListView /></DefaultLayout>
@@ -73,7 +81,7 @@ function App() {
                                 </PrivateRoute>
                             } />
 
-                            {/* Products */}
+                            {/* Products - All users can CRUD their own */}
                             <Route path="/products" element={
                                 <PrivateRoute>
                                     <DefaultLayout><ProductListView /></DefaultLayout>
@@ -90,7 +98,7 @@ function App() {
                                 </PrivateRoute>
                             } />
 
-                            {/* Orders */}
+                            {/* Orders - All users can CRUD their own */}
                             <Route path="/orders" element={
                                 <PrivateRoute>
                                     <DefaultLayout><OrderListView /></DefaultLayout>
@@ -107,11 +115,30 @@ function App() {
                                 </PrivateRoute>
                             } />
 
-                            {/* Restock Queue */}
+                            {/* Restock Queue - All users */}
                             <Route path="/restock-queue" element={
                                 <PrivateRoute>
                                     <DefaultLayout><RestockQueueView /></DefaultLayout>
                                 </PrivateRoute>
+                            } />
+
+                            {/* Activity Log - All users */}
+                            <Route path="/activity-log" element={
+                                <PrivateRoute>
+                                    <DefaultLayout><ActivityLogView /></DefaultLayout>
+                                </PrivateRoute>
+                            } />
+
+                            {/* Customers - Admin Only */}
+                            <Route path="/customers" element={
+                                <RoleBasedRoute adminOnly={true}>
+                                    <DefaultLayout><CustomerListView /></DefaultLayout>
+                                </RoleBasedRoute>
+                            } />
+                            <Route path="/customers/:id/edit" element={
+                                <RoleBasedRoute adminOnly={true}>
+                                    <DefaultLayout><CustomerForm /></DefaultLayout>
+                                </RoleBasedRoute>
                             } />
 
                             {/* Default redirect */}

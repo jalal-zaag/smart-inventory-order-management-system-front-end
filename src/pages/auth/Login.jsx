@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
-import { Form, Input, Button, Card, Typography, Space, Divider } from 'antd';
-import { UserOutlined, LockOutlined, MailOutlined } from '@ant-design/icons';
+import { Form, Input, Button, Card, Typography, Space, Divider, Row, Col } from 'antd';
+import { UserOutlined, LockOutlined, MailOutlined, CrownOutlined } from '@ant-design/icons';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContextProvider';
 import { ToastContext } from '../../context/ToastContextProvider';
@@ -28,10 +28,17 @@ const Login = () => {
         }
     };
 
-    const handleDemoLogin = () => {
+    // Simplified demo accounts: Admin and User only
+    const demoAccounts = {
+        admin: { email: 'admin@example.com', password: 'admin123' },
+        user: { email: 'user@example.com', password: 'user123' }
+    };
+
+    const handleDemoLogin = (type) => {
+        const account = demoAccounts[type];
         form.setFieldsValue({
-            email: 'demo@example.com',
-            password: 'demo123'
+            email: account.email,
+            password: account.password
         });
     };
 
@@ -74,10 +81,33 @@ const Login = () => {
                             </Button>
                         </Form.Item>
 
-                        <Form.Item>
-                            <Button onClick={handleDemoLogin} block>
-                                Demo Login (Fill Credentials)
-                            </Button>
+                        {/* Demo Login Buttons */}
+                        <Form.Item style={{ marginBottom: 0 }}>
+                            <Row gutter={12}>
+                                <Col span={12}>
+                                    <Button 
+                                        block 
+                                        icon={<CrownOutlined />}
+                                        onClick={() => handleDemoLogin('admin')}
+                                        style={{ 
+                                            background: '#722ed1', 
+                                            borderColor: '#722ed1',
+                                            color: '#fff'
+                                        }}
+                                    >
+                                        Demo Admin
+                                    </Button>
+                                </Col>
+                                <Col span={12}>
+                                    <Button 
+                                        block
+                                        icon={<UserOutlined />}
+                                        onClick={() => handleDemoLogin('user')}
+                                    >
+                                        Demo User
+                                    </Button>
+                                </Col>
+                            </Row>
                         </Form.Item>
                     </Form>
 

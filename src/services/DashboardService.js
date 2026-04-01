@@ -7,4 +7,7 @@ export default class DashboardService {
 
     static getRecentActivities = params =>
         privateAPI.get(API_URL.GET_RECENT_ACTIVITIES_URL, { params }).then(res => res.data);
+
+    static getChartData = params =>
+        privateAPI.get(API_URL.GET_CHART_DATA_URL, { params }).then(res => res.data);
 }

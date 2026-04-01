@@ -5,6 +5,12 @@ import { getErrorMessage } from '../utils/GenericUtils';
 
 export const AuthContext = createContext();
 
+// Simplified role system: admin and user only
+const ROLES = {
+    admin: 'admin',
+    user: 'user'
+};
+
 export const AuthContextProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -55,6 +61,28 @@ export const AuthContextProvider = ({ children }) => {
         setIsAuthenticated(false);
     };
 
+    // Check if user is admin (full access)
+    const isAdmin = () => user?.role === ROLES.admin;
+
+    // Check if user is regular user
+    const isUser = () => user?.role === ROLES.user;
+
+    // For backward compatibility - maps to isAdmin
+    const hasRole = (requiredRole) => {
+        if (!user?.role) return false;
+        if (requiredRole === 'admin') return isAdmin();
+        return true; // Any authenticated user can access non-admin routes
+    };
+
+    // For backward compatibility
+    const hasAnyRole = (...roles) => {
+        if (!user?.role) return false;
+        return roles.includes(user.role);
+    };
+
+    // For backward compatibility - now same as isAdmin
+    const isManagerOrAbove = () => isAdmin();
+
     return (
         <AuthContext.Provider value={{
             user,
@@ -63,7 +91,12 @@ export const AuthContextProvider = ({ children }) => {
             login,
             register,
             logout,
-            checkAuth
+            checkAuth,
+            hasRole,
+            hasAnyRole,
+            isAdmin,
+            isUser,
+            isManagerOrAbove
         }}>
             {children}
         </AuthContext.Provider>

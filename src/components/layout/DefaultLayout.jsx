@@ -1,13 +1,14 @@
 import React, { useState, useContext } from 'react';
-import { Layout, Menu, Button, Avatar, Dropdown, Space, theme } from 'antd';
+import { Layout, Menu, Button, Avatar, Dropdown, Space, Tag, theme } from 'antd';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
     MenuFoldOutlined,
     MenuUnfoldOutlined,
     UserOutlined,
-    LogoutOutlined
+    LogoutOutlined,
+    CrownOutlined
 } from '@ant-design/icons';
-import { navItems } from '../../routes/Navs';
+import { getNavItemsForRole } from '../../routes/Navs';
 import { AuthContext } from '../../context/AuthContextProvider';
 
 const { Header, Sider, Content } = Layout;
@@ -16,9 +17,11 @@ const DefaultLayout = ({ children }) => {
     const [collapsed, setCollapsed] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
-    const { user, logout } = useContext(AuthContext);
+    const { user, logout, isAdmin } = useContext(AuthContext);
     const { token: { colorBgContainer, borderRadiusLG } } = theme.useToken();
 
+    // Get navigation items based on user role
+    const navItems = getNavItemsForRole(isAdmin());
     const menuItems = navItems.map(item => ({
         key: item.path,
         icon: React.createElement(item.icon),
@@ -30,7 +33,12 @@ const DefaultLayout = ({ children }) => {
         {
             key: 'profile',
             icon: <UserOutlined />,
-            label: user?.name || 'User'
+            label: (
+                <Space>
+                    {user?.name || 'User'}
+                    {isAdmin() && <Tag color="purple" icon={<CrownOutlined />}>Admin</Tag>}
+                </Space>
+            )
         },
         {
             type: 'divider'

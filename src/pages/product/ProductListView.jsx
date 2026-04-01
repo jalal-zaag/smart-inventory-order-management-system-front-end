@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import ProductService from '../../services/ProductService';
 import CategoryService from '../../services/CategoryService';
 import { ToastContext } from '../../context/ToastContextProvider';
+import { AuthContext } from '../../context/AuthContextProvider';
 import { getErrorMessage, formatCurrency, getStatusColor } from '../../utils/GenericUtils';
 import SearchFilter from '../../components/common/SearchFilter';
 import CustomTable from '../../components/common/CustomTable';
@@ -22,8 +23,15 @@ const ProductListView = () => {
     const [pagination, setPagination] = useState({ page: 1, size: 10, total: 0 });
     const navigate = useNavigate();
     const { showSuccess, showError } = useContext(ToastContext);
+    const { isAdmin } = useContext(AuthContext);
     const { allParams } = useGetParamData();
     const { updateSearchParams } = useQueryParams();
+
+    // All users can create, edit, delete their own data
+    // (Backend enforces ownership - users can only modify their own data)
+    const canCreate = true;
+    const canEdit = true;
+    const canDelete = true;
 
     useEffect(() => {
         fetchCategories();
@@ -125,23 +133,27 @@ const ProductListView = () => {
         {
             title: 'Name',
             dataIndex: 'name',
-            key: 'name'
+            key: 'name',
+            width: 200
         },
         {
             title: 'Category',
             dataIndex: 'categoryName',
-            key: 'categoryName'
+            key: 'categoryName',
+            width: 150
         },
         {
             title: 'Price',
             dataIndex: 'price',
             key: 'price',
+            width: 120,
             render: (price) => formatCurrency(price)
         },
         {
             title: 'Stock',
             dataIndex: 'stockQuantity',
             key: 'stockQuantity',
+            width: 100,
             render: (stock, record) => (
                 <span style={{ color: stock < record.minStockThreshold ? '#ff4d4f' : 'inherit' }}>
                     {stock} {stock < record.minStockThreshold && '(Low)'}
@@ -151,34 +163,42 @@ const ProductListView = () => {
         {
             title: 'Min Threshold',
             dataIndex: 'minStockThreshold',
-            key: 'minStockThreshold'
+            key: 'minStockThreshold',
+            width: 140
         },
         {
             title: 'Status',
             dataIndex: 'status',
             key: 'status',
+            width: 90,
             render: (status) => <Tag color={getStatusColor(status)}>{status}</Tag>
         },
         {
             title: 'Actions',
             key: 'actions',
+            width: 200,
+            align: "center",
             render: (_, record) => (
                 <Space>
-                    <Button
-                        type="link"
-                        icon={<EditOutlined />}
-                        onClick={() => navigate(`/products/${record.id}/edit`)}
-                    >
-                        Edit
-                    </Button>
-                    <Button
-                        type="link"
-                        danger
-                        icon={<DeleteOutlined />}
-                        onClick={() => handleDelete(record.id, record.name)}
-                    >
-                        Delete
-                    </Button>
+                    {canEdit ? (
+                        <Button
+                            type="link"
+                            icon={<EditOutlined />}
+                            onClick={() => navigate(`/products/${record.id}/edit`)}
+                        >
+                            Edit
+                        </Button>
+                    ) : null}
+                    {canDelete ? (
+                        <Button
+                            type="link"
+                            danger
+                            icon={<DeleteOutlined />}
+                            onClick={() => handleDelete(record.id, record.name)}
+                        >
+                            Delete
+                        </Button>
+                    ) : null}
                 </Space>
             )
         }
@@ -188,13 +208,15 @@ const ProductListView = () => {
         <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
                 <Title level={3}>Products</Title>
-                <Button
-                    type="primary"
-                    icon={<PlusOutlined />}
-                    onClick={() => navigate('/products/create')}
-                >
-                    Add Product
-                </Button>
+                {canCreate ? (
+                    <Button
+                        type="primary"
+                        icon={<PlusOutlined />}
+                        onClick={() => navigate('/products/create')}
+                    >
+                        Add Product
+                    </Button>
+                ) : null}
             </div>
 
             <SearchFilter config={searchConfig} />

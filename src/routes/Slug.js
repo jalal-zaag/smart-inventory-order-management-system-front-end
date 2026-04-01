@@ -21,6 +21,13 @@ export const ORDER_VIEW = '/orders/:id';
 // Restock
 export const RESTOCK_QUEUE = '/restock-queue';
 
+// Activity Log
+export const ACTIVITY_LOG = '/activity-log';
+
+// Customers (Admin only)
+export const CUSTOMERS = '/customers';
+export const CUSTOMER_EDIT = '/customers/:id/edit';
+
 // Error pages
 export const PAGE_403 = '/403';
 export const PAGE_404 = '/404';

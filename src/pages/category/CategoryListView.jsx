@@ -4,6 +4,7 @@ import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import CategoryService from '../../services/CategoryService';
 import { ToastContext } from '../../context/ToastContextProvider';
+import { AuthContext } from '../../context/AuthContextProvider';
 import { getErrorMessage } from '../../utils/GenericUtils';
 import { formatDateTime } from '../../utils/DateFormatterUtils';
 import SearchFilter from '../../components/common/SearchFilter';
@@ -21,8 +22,15 @@ const CategoryListView = () => {
     const [pagination, setPagination] = useState({ page: 1, size: 10, total: 0 });
     const navigate = useNavigate();
     const { showSuccess, showError } = useContext(ToastContext);
+    const { isAdmin } = useContext(AuthContext);
     const { allParams } = useGetParamData();
     const { updateSearchParams } = useQueryParams();
+
+    // All users can create, edit, delete their own data
+    // (Backend enforces ownership - users can only modify their own data)
+    const canCreate = true;
+    const canEdit = true;
+    const canDelete = true;
 
     useEffect(() => {
         fetchCategories();
@@ -80,40 +88,49 @@ const CategoryListView = () => {
         {
             title: 'Name',
             dataIndex: 'name',
-            key: 'name'
+            key: 'name',
+            width: 250
         },
         {
             title: 'Description',
             dataIndex: 'description',
             key: 'description',
+            ellipsis: true,
             render: (text) => text || '-'
         },
         {
             title: 'Created At',
             dataIndex: 'createdAt',
             key: 'createdAt',
+            width: 180,
             render: (date) => formatDateTime(date)
         },
         {
             title: 'Actions',
             key: 'actions',
+            width: 200,
+            align: "center",
             render: (_, record) => (
                 <Space>
-                    <Button
-                        type="link"
-                        icon={<EditOutlined />}
-                        onClick={() => navigate(`/categories/${record.id}/edit`)}
-                    >
-                        Edit
-                    </Button>
-                    <Button
-                        type="link"
-                        danger
-                        icon={<DeleteOutlined />}
-                        onClick={() => handleDelete(record.id, record.name)}
-                    >
-                        Delete
-                    </Button>
+                    {canEdit ? (
+                        <Button
+                            type="link"
+                            icon={<EditOutlined />}
+                            onClick={() => navigate(`/categories/${record.id}/edit`)}
+                        >
+                            Edit
+                        </Button>
+                    ) : null}
+                    {canDelete ? (
+                        <Button
+                            type="link"
+                            danger
+                            icon={<DeleteOutlined />}
+                            onClick={() => handleDelete(record.id, record.name)}
+                        >
+                            Delete
+                        </Button>
+                    ) : null}
                 </Space>
             )
         }
@@ -123,13 +140,15 @@ const CategoryListView = () => {
         <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
                 <Title level={3}>Categories</Title>
-                <Button
-                    type="primary"
-                    icon={<PlusOutlined />}
-                    onClick={() => navigate('/categories/create')}
-                >
-                    Add Category
-                </Button>
+                {canCreate ? (
+                    <Button
+                        type="primary"
+                        icon={<PlusOutlined />}
+                        onClick={() => navigate('/categories/create')}
+                    >
+                        Add Category
+                    </Button>
+                ) : null}
             </div>
 
             <SearchFilter config={searchConfig} />
