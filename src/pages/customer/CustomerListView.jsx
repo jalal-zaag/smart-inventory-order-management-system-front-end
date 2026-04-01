@@ -131,15 +131,6 @@ const CustomerListView = () => {
             key: 'actions',
             render: (_, record) => (
                 <Space>
-                    {canEdit ? (
-                        <Button
-                            type="link"
-                            icon={<EditOutlined />}
-                            onClick={() => navigate(`/customers/${record.id}/edit`)}
-                        >
-                            Edit
-                        </Button>
-                    ) : null}
                     {canDelete ? (
                         <Button
                             type="link"

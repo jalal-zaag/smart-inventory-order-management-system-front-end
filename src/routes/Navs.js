@@ -18,6 +18,13 @@ export const navItems = [
         path: SLUG.DASHBOARD
     },
     {
+        key: 'customers',
+        icon: TeamOutlined,
+        label: 'Customers',
+        path: SLUG.CUSTOMERS,
+        adminOnly: true  // Mark as admin-only
+    },
+    {
         key: 'categories',
         icon: TagsOutlined,
         label: 'Categories',
@@ -46,13 +53,6 @@ export const navItems = [
         icon: HistoryOutlined,
         label: 'Activity Log',
         path: SLUG.ACTIVITY_LOG
-    },
-    {
-        key: 'customers',
-        icon: TeamOutlined,
-        label: 'Customers',
-        path: SLUG.CUSTOMERS,
-        adminOnly: true  // Mark as admin-only
     }
 ];
 

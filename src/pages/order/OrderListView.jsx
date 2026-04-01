@@ -112,7 +112,8 @@ const OrderListView = () => {
         {
             title: 'Order #',
             dataIndex: 'orderNumber',
-            key: 'orderNumber'
+            key: 'orderNumber',
+            width: 200,
         },
         {
             title: 'Customer',

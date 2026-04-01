@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Typography, Tag, Button } from 'antd';
-import { ReloadOutlined } from '@ant-design/icons';
+import { Typography, Tag } from 'antd';
 import ActivityLogService from '../../services/ActivityLogService';
 import { ToastContext } from '../../context/ToastContextProvider';
 import { getErrorMessage } from '../../utils/GenericUtils';
@@ -129,7 +128,6 @@ const ActivityLogView = () => {
         <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
                 <Title level={3}>Activity Log</Title>
-                <Button onClick={fetchActivities} icon={<ReloadOutlined />}>Refresh</Button>
             </div>
 
             <SearchFilter config={searchConfig} />
