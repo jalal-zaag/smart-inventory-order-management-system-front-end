@@ -95,6 +95,7 @@ const CategoryListView = () => {
             title: 'Description',
             dataIndex: 'description',
             key: 'description',
+            ellipsis: true,
             render: (text) => text || '-'
         },
         {
