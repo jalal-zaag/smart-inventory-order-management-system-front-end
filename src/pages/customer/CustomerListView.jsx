@@ -130,25 +130,25 @@ const CustomerListView = () => {
             width: 180,
             render: (date) => formatDateTime(date)
         },
-        {
-            title: 'Actions',
-            key: 'actions',
-            width: 150,
-            render: (_, record) => (
-                <Space>
-                    {canDelete ? (
-                        <Button
-                            type="link"
-                            danger
-                            icon={<DeleteOutlined />}
-                            onClick={() => handleDelete(record.id, record.name)}
-                        >
-                            Delete
-                        </Button>
-                    ) : null}
-                </Space>
-            )
-        }
+        // {
+        //     title: 'Actions',
+        //     key: 'actions',
+        //     width: 150,
+        //     render: (_, record) => (
+        //         <Space>
+        //             {canDelete ? (
+        //                 <Button
+        //                     type="link"
+        //                     danger
+        //                     icon={<DeleteOutlined />}
+        //                     onClick={() => handleDelete(record.id, record.name)}
+        //                 >
+        //                     Delete
+        //                 </Button>
+        //             ) : null}
+        //         </Space>
+        //     )
+        // }
     ];
 
     return (
