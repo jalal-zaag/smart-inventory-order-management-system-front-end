@@ -5,6 +5,7 @@ import { AuthContextProvider } from './context/AuthContextProvider';
 import { ToastContextProvider } from './context/ToastContextProvider';
 import Interceptors from './rest-handlers/Interceptors';
 import PrivateRoute from './routes/PrivateRoute';
+import RoleBasedRoute from './routes/RoleBasedRoute';
 import DefaultLayout from './components/layout/DefaultLayout';
 
 // Auth Pages
@@ -32,6 +33,10 @@ import RestockQueueView from './pages/restock/RestockQueueView';
 
 // Activity Log
 import ActivityLogView from './pages/activity/ActivityLogView';
+
+// Customer Pages (Admin Only)
+import CustomerListView from './pages/customer/CustomerListView';
+import CustomerForm from './pages/customer/CustomerForm';
 
 const theme = {
     token: {
@@ -122,6 +127,18 @@ function App() {
                                 <PrivateRoute>
                                     <DefaultLayout><ActivityLogView /></DefaultLayout>
                                 </PrivateRoute>
+                            } />
+
+                            {/* Customers - Admin Only */}
+                            <Route path="/customers" element={
+                                <RoleBasedRoute adminOnly={true}>
+                                    <DefaultLayout><CustomerListView /></DefaultLayout>
+                                </RoleBasedRoute>
+                            } />
+                            <Route path="/customers/:id/edit" element={
+                                <RoleBasedRoute adminOnly={true}>
+                                    <DefaultLayout><CustomerForm /></DefaultLayout>
+                                </RoleBasedRoute>
                             } />
 
                             {/* Default redirect */}

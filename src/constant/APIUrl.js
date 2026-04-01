@@ -42,3 +42,9 @@ export const GET_CHART_DATA_URL = `${BASE_URL}/dashboard/chart-data`;
 // Activity Log endpoints
 export const GET_ALL_ACTIVITY_LOGS_URL = `${BASE_URL}/activity-logs`;
 export const GET_ACTIVITY_LOG_URL = id => `${BASE_URL}/activity-logs/${id}`;
+
+// Customer endpoints (Admin only)
+export const GET_ALL_CUSTOMERS_URL = `${BASE_URL}/customers`;
+export const GET_CUSTOMER_URL = id => `${BASE_URL}/customers/${id}`;
+export const UPDATE_CUSTOMER_URL = id => `${BASE_URL}/customers/${id}`;
+export const DELETE_CUSTOMER_URL = id => `${BASE_URL}/customers/${id}`;

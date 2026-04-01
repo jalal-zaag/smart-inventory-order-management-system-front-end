@@ -4,11 +4,12 @@ import {
     AppstoreOutlined,
     TagsOutlined,
     WarningOutlined,
-    HistoryOutlined
+    HistoryOutlined,
+    TeamOutlined
 } from '@ant-design/icons';
 import * as SLUG from './Slug';
 
-// All navigation items visible to all users
+// All navigation items - customers only shown to admins
 export const navItems = [
     {
         key: 'dashboard',
@@ -45,8 +46,20 @@ export const navItems = [
         icon: HistoryOutlined,
         label: 'Activity Log',
         path: SLUG.ACTIVITY_LOG
+    },
+    {
+        key: 'customers',
+        icon: TeamOutlined,
+        label: 'Customers',
+        path: SLUG.CUSTOMERS,
+        adminOnly: true  // Mark as admin-only
     }
 ];
 
-// All users see all nav items
-export const getNavItemsForRole = () => navItems;
+// Get nav items based on user role - filter out admin-only items for non-admins
+export const getNavItemsForRole = (isAdminUser) => {
+    if (isAdminUser) {
+        return navItems; // Admins see everything
+    }
+    return navItems.filter(item => !item.adminOnly); // Regular users don't see admin-only items
+};

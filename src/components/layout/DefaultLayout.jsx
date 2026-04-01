@@ -8,7 +8,7 @@ import {
     LogoutOutlined,
     CrownOutlined
 } from '@ant-design/icons';
-import { navItems } from '../../routes/Navs';
+import { getNavItemsForRole } from '../../routes/Navs';
 import { AuthContext } from '../../context/AuthContextProvider';
 
 const { Header, Sider, Content } = Layout;
@@ -20,7 +20,8 @@ const DefaultLayout = ({ children }) => {
     const { user, logout, isAdmin } = useContext(AuthContext);
     const { token: { colorBgContainer, borderRadiusLG } } = theme.useToken();
 
-    // All users see all nav items
+    // Get navigation items based on user role
+    const navItems = getNavItemsForRole(isAdmin());
     const menuItems = navItems.map(item => ({
         key: item.path,
         icon: React.createElement(item.icon),
