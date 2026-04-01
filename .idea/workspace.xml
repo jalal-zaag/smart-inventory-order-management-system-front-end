@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6e03ef5b-765b-41bf-9c35-0099c6d6e4a4" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/pages/category/CategoryListView.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/category/CategoryListView.jsx" afterDir="false" />
-    </list>
+    <list default="true" id="6e03ef5b-765b-41bf-9c35-0099c6d6e4a4" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
